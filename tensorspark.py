@@ -34,10 +34,11 @@ local_directory = "/hadoopfs/fs1/python/tests/tensorspark/" # path in datanodes
 
 model_keyword = 'mnist'
 if model_keyword == 'mnist':
-    training_rdd_filename = '%smnist_train.csv' % directory
+    # training_rdd_filename = '%smnist_train.csv' % directory
+    training_rdd_filename = '%stiny_mnist_test.csv' % directory
 
     #test_filename = '%smnist_test.csv' % directory
-    #test_filename = '%stiny_mnist_test.csv' % directory
+    test_filename = '%stiny_mnist_test.csv' % directory
 
     #mod (adding test_path to read the testset from the HDFS instead)
     #local_test_path = '%smnist_test.csv' % directory

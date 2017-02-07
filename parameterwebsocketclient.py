@@ -12,7 +12,8 @@ from tornado.ioloop import IOLoop
 import cStringIO
 
 #mod (we need to find out the IP address of the param server if using the YARN-Cluster mode; see below)
-isUsingYARNclusterMode = False
+# isUsingYARNclusterMode = False
+isUsingYARNclusterMode = True
 # TODO
 # Imagenet
 # Tachyon
@@ -57,7 +58,7 @@ class TensorSparkWorker(Borg):
           import time 
           import urllib2
           nodes= ({'hostname1':'10.0.0.0',
-                   'hostname2':'10.0.0.1',...})
+                   'hostname2':'10.0.0.1'})
           YARN_app_queue = 'default'
           YARN_address = 'http://YARN IP:8088'
         
