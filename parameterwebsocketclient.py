@@ -57,9 +57,9 @@ class TensorSparkWorker(Borg):
       else:
           import time 
           import urllib2
-          nodes= ({'ip-172-31-21-135.cn-north-1.compute.internal':'172.31.21.135'})
+          nodes= ({'ip-172-31-19-76.cn-north-1.compute.internal':'172.31.19.76'})
           YARN_app_queue = 'default'
-          YARN_address = 'http://172.31.19.19:8088'
+          YARN_address = 'http://172.31.19.171:8088'
         
           YARN_app_startedTimeBegin = str(int(time.time() - 3600)) # We allow 3,600 sec from start of the app up to this point
         
@@ -73,7 +73,7 @@ class TensorSparkWorker(Borg):
           print 'HTML 111111111:'+html
           amHost_start = html.find('amHostHttpAddress') + len('amHostHttpAddress":"')
           print 'amHost_start 111111111:%d' % amHost_start
-          amHost_length = len('ip-172-31-21-135.cn-north-1.compute.internal')
+          amHost_length = len('ip-172-31-19-76.cn-north-1.compute.internal')
           amHost = html[amHost_start : amHost_start + amHost_length]
           print 'amHostHttpAddress is: ' + amHost
           try:
