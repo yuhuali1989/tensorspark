@@ -18,7 +18,8 @@ import numpy as np
 #import sys
 
 #mod (In this mode (if True), the Driver only trains with batch_sz, then hands over the training to the executor(s))
-driverLowLoadExecution = False
+# driverLowLoadExecution = False
+driverLowLoadExecution = True
 
 #mod (allowing limited training in each epoch)
 isTrainingLimited = False
@@ -35,18 +36,18 @@ local_directory = "/hadoopfs/fs1/python/tests/tensorspark/" # path in datanodes
 model_keyword = 'mnist'
 if model_keyword == 'mnist':
     # training_rdd_filename = '%smnist_train.csv' % directory
-    training_rdd_filename = '%stiny_mnist_test.csv' % directory
+    training_rdd_filename = '%smnist_train.csv' % directory
 
     #test_filename = '%smnist_test.csv' % directory
-    test_filename = '%stiny_mnist_test.csv' % directory
+    test_filename = '%smnist_test.csv' % directory
 
     #mod (adding test_path to read the testset from the HDFS instead)
     #local_test_path = '%smnist_test.csv' % directory
-    test_path = '%smnist_test.csv' % directory
+    test_path = '%stiny_mnist_test.csv' % directory
 
-    partitions = 48
+    partitions = 50
     warmup = 2000
-    batch_sz = 50
+    batch_sz = 48
     epochs = 5
     repartition = True
     time_lag = 100
@@ -191,7 +192,8 @@ def train_epochs(num_epochs, training_rdd, num_partitions):
                 if repartition:                                                                                                                                            
                         training_rdd = training_rdd.repartition(num_partitions)                                                                                            
                 mapped_training = training_rdd.mapPartitions(train_partition)                                                                                              
-                mapped_training.collect()                                                                                                                                  
+                mapped_training.collect()
+                print 'yuhuali finish epochs %d' % i
                 #training_rdd.repartition(training_rdd.getNumPartitions())                                                                                                 
                                                                                                                                                                            
                                                                                                                                                                            
@@ -216,6 +218,7 @@ def main(warmup_iterations, num_epochs, num_partitions):
                 #mod (allowing limited training in each epoch) [setting values on top]
                 if isTrainingLimited == False:                                                                                                                                                 
                     training_rdd = sc.textFile(training_rdd_filename, minPartitions=num_partitions).cache()
+                    # print 'yuhuali load:'+ str(training_rdd.take(1))
                 else:
                     training_rdd = sc.parallelize(sc.textFile(training_rdd_filename, minPartitions=num_partitions).take(training_iterations)).cache()
 

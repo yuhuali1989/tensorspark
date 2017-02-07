@@ -8,3 +8,5 @@ data/*
 # IntelliJ IDEA files
 *.iml
 .idea/
+mnist_train.csv
+mnist_test.csv

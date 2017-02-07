@@ -23,7 +23,7 @@ class MnistDNN(ParameterServerModel):
 #        with session.graph.device(self.device_for_node):
 	input_units = 784
 	output_units = 10
-	hidden_units = 10
+	hidden_units = 1024
 	x = tf.placeholder("float", shape=[None, input_units], name='x')
                 #x_image = tf.reshape(x, [-1,28,28,1], name='reshape')
 	true_y = tf.placeholder("float", shape=[None, output_units], name='y_')
@@ -82,8 +82,8 @@ class MnistDNN(ParameterServerModel):
                                                                                                                                                                            
         return labels, features                                                                                                                                            
                                                                                                                                                                            
-    def process_partition(self, partition):                                                                                                                                
-        batch_size = self.batch_size                                                                                                                                       
+    def process_partition(self, partition):
+        batch_size = self.batch_size
         #batch_size = 100                                                                                                                                                  
         print 'batch_size = %d' % batch_size                                                                                                                               
         num_classes = self.get_num_classes()                                                                                                                               
@@ -93,7 +93,8 @@ class MnistDNN(ParameterServerModel):
             batch_size = 1000000                                                                                                                                           
         for i in xrange(batch_size):                                                                                                                                       
             try:                                                                                                                                                           
-                line = partition.next()                                                                                                                                    
+                line = partition.next()
+                print 'Line '+str(line)
                 if len(line) is 0:                                                                                                                                         
                     print 'Skipping empty line'                                                                                                                            
                     continue                                                                                                                                               
@@ -106,7 +107,7 @@ class MnistDNN(ParameterServerModel):
                 features.append(split[1:])                                                                                                                                 
                 label[split[0]] = 1                                                                                                                                        
                 labels.append(label)                                                                                                                                       
-            except StopIteration:                                                                                                                                          
+            except ValueError:
                 break                                                                                                                                                      
                                                                                                                                                                            
         return labels, features                                                                                                                                            

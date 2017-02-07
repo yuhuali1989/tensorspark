@@ -57,10 +57,9 @@ class TensorSparkWorker(Borg):
       else:
           import time 
           import urllib2
-          nodes= ({'hostname1':'10.0.0.0',
-                   'hostname2':'10.0.0.1'})
+          nodes= ({'ip-172-31-21-135.cn-north-1.compute.internal':'172.31.21.135'})
           YARN_app_queue = 'default'
-          YARN_address = 'http://YARN IP:8088'
+          YARN_address = 'http://172.31.19.19:8088'
         
           YARN_app_startedTimeBegin = str(int(time.time() - 3600)) # We allow 3,600 sec from start of the app up to this point
         
@@ -71,8 +70,10 @@ class TensorSparkWorker(Borg):
           print 'Sent request to YARN: ' + requestedURL
           response = urllib2.urlopen(requestedURL)
           html = response.read()
+          print 'HTML 111111111:'+html
           amHost_start = html.find('amHostHttpAddress') + len('amHostHttpAddress":"')
-          amHost_length = len('hostname1')
+          print 'amHost_start 111111111:%d' % amHost_start
+          amHost_length = len('ip-172-31-21-135.cn-north-1.compute.internal')
           amHost = html[amHost_start : amHost_start + amHost_length]
           print 'amHostHttpAddress is: ' + amHost
           try:
@@ -85,7 +86,8 @@ class TensorSparkWorker(Borg):
                                                                                                                                                                            
    def train_partition(self, partition):                                                                                                                                   
       while True:                                                                                                                                                          
-         #print 'TensorSparkWorker().train_partition iteration %d' % self.iteration                                                                                        
+         #print 'TensorSparkWorker().train_partition iteration %d' % self.iteration
+
          labels, features = self.model.process_partition(partition)                                                                                                        
                                                                                                                                                                            
          if len(labels) is 0:                                                                                                                                              

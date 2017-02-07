@@ -86,7 +86,8 @@ class MolecularDNN(ParameterServerModel):
                         batch_size = 1000000                                                                                                                               
                 for i in xrange(batch_size):                                                                                                                               
                         try:                                                                                                                                               
-                                line = partition.next()                                                                                                                    
+                                line = partition.next()
+                                print '1111111 line '+ line
                                 if len(line) is 0:                                                                                                                         
                                         print 'Skipping empty line'                                                                                                        
                                         continue                                                                                                                           
