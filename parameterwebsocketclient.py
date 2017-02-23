@@ -61,6 +61,7 @@ class TensorSparkWorker(Borg):
     else:
       import time
       import urllib2
+      import json
 
       nodes = ({'ip-172-31-26-81.cn-north-1.compute.internal': '172.31.26.81'})
       YARN_app_queue = 'default'
@@ -74,20 +75,22 @@ class TensorSparkWorker(Borg):
       print 'Sent request to YARN: ' + requestedURL
       response = urllib2.urlopen(requestedURL)
       html = response.read()
-      # responseJson = json.load(str(html))
+      responseJson = json.loads(html)
+      amHostPortFromJson = responseJson['apps']['app'][0]['amHostHttpAddress']
+      amHostFromJson = str(amHostPortFromJson).split(':')[0]
       print 'HTML 111111111:' + html
-      amHost_start = html.find('amHostHttpAddress') + len('amHostHttpAddress":"')
-      print 'amHost_start 111111111:%d' % amHost_start
-      amHost_length = len('ip-172-31-19-76.cn-north-1.compute.internal')
-      amHost = html[amHost_start: amHost_start + amHost_length]
-      print 'amHostHttpAddress is: ' + amHost
-      print 'amHostHttpIpis: ' + nodes[amHost]
+      # amHost_start = html.find('amHostHttpAddress') + len('amHostHttpAddress":"')
+      # print 'amHost_start 111111111:%d' % amHost_start
+      # amHost_length = len('ip-172-31-19-76.cn-north-1.compute.internal')
+      # amHost = html[amHost_start: amHost_start + amHost_length]
+      print 'amHostHttpAddress is: ' + amHostFromJson
+      # print 'amHostHttpIpis: ' + nodes[amHost]
       try:
         self.websock = yield tornado.websocket.websocket_connect(
-          "ws://%s:%d/" % (nodes[amHost], self.websocket_port), connect_timeout=3600)
-        print 'Connected to server running on %s' % nodes[amHost]
+          "ws://%s:%d/" % (amHostFromJson, self.websocket_port), connect_timeout=3600)
+        print 'Connected to server running on %s' % amHostFromJson
       except:
-        print 'Could not connect to server on %s' % nodes[amHost]
+        print 'Could not connect to server on %s' % amHostFromJson
         # mod: end
 
   def train_partition(self, partition):

@@ -51,9 +51,9 @@ if model_keyword == 'mnist':
   # local_test_path = '%smnist_test.csv' % directory
   test_path = '%stiny_mnist_test.csv' % directory
 
-  partitions = 2
-  warmup = 20
-  batch_sz = 2
+  partitions = 40
+  warmup = 2000
+  batch_sz = 50
   epochs = 5
   repartition = True
   time_lag = 100

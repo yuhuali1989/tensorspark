@@ -26,7 +26,7 @@ class MnistDNN(ParameterServerModel):
     #        with session.graph.device(self.device_for_node):
     input_units = 784
     output_units = 10
-    hidden_units = 3
+    hidden_units = 1024
     x = tf.placeholder("float", shape=[None, input_units], name='x')
     # x_image = tf.reshape(x, [-1,28,28,1], name='reshape')
     true_y = tf.placeholder("float", shape=[None, output_units], name='y_')
