@@ -34,10 +34,7 @@ directory = "hdfs:///data/ml/tensorspark/"
 local_directory = "/hadoopfs/fs1/python/tests/tensorspark/"  # path in datanodes
 import socket
 
-# get yarn ip ,suppose yarn rm is on your submit mechina but not always work
-yarn_ip = '172.31.29.43'
 
-print 'yarn-rm-ip :%s' % yarn_ip
 
 model_keyword = 'mnist'
 if model_keyword == 'mnist':
@@ -111,8 +108,17 @@ conf.setExecutorEnv('PATH',
 
 
 sc = pyspark.SparkContext(conf=conf)
+# get application id
 application_id = sc._jsc.sc().applicationId()
+# detect yarn ip
+try:
+  yarn_ip = \
+    str(sc._jsc.sc().getConf().get('spark.yarn.historyServer.address')).strip().split(':')[0]
+except Exception as e:
+  print 'Could not get yarn host from spark java context except:%s' % str(e)
+# yarn_ip = '172.31.29.43'
 
+print 'yarn-rm-ip :%s' % yarn_ip
 websocket_port = random.randint(30000, 60000)
 print 'websocket_port %d' % websocket_port
 
@@ -190,12 +196,14 @@ class ParameterServer(threading.Thread):
 
 def train_partition(partition):
   return parameterwebsocketclient.TensorSparkWorker(model_keyword, batch_sz, websocket_port,
-                                                    yarn_ip,application_id).train_partition(partition)
+                                                    yarn_ip, application_id).train_partition(
+    partition)
 
 
 def test_partition(partition):
   return parameterwebsocketclient.TensorSparkWorker(model_keyword, batch_sz, websocket_port,
-                                                    yarn_ip,application_id).test_partition(partition)
+                                                    yarn_ip, application_id).test_partition(
+    partition)
 
 
 # you can find the mnist csv files here http://pjreddie.com/projects/mnist-in-csv/                                                                                         
