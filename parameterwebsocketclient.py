@@ -29,7 +29,7 @@ class Borg:
 
 
 class TensorSparkWorker(Borg):
-  def __init__(self, model_keyword, batch_size, websocket_port, yarn_ip):
+  def __init__(self, model_keyword, batch_size, websocket_port, yarn_ip, application_id):
     Borg.__init__(self)
 
     if 'model' not in self.__dict__:
@@ -46,6 +46,7 @@ class TensorSparkWorker(Borg):
       self.websocket_port = websocket_port
       self.loop = IOLoop.current()
       self.yarn_ip = yarn_ip
+      self.application_id = application_id
       self.loop.run_sync(self.init_websocket)
       self.iteration = 0
 
@@ -76,8 +77,15 @@ class TensorSparkWorker(Borg):
       response = urllib2.urlopen(requestedURL)
       html = response.read()
       responseJson = json.loads(html)
-      amHostPortFromJson = responseJson['apps']['app'][0]['amHostHttpAddress']
-      amHostFromJson = str(amHostPortFromJson).split(':')[0]
+      for app in responseJson['apps']['app']:
+        if app['id'] == self.application_id:
+          amHostPortFromJson = app['amHostHttpAddress']
+          amHostFromJson = str(amHostPortFromJson).split(':')[0]
+          break
+      if not amHostFromJson:
+        print 'Could not find amHost for application_id :%s,all apps :$s' % (
+          self.application_id, responseJson)
+
       print 'HTML 111111111:' + html
       # amHost_start = html.find('amHostHttpAddress') + len('amHostHttpAddress":"')
       # print 'amHost_start 111111111:%d' % amHost_start

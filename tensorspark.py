@@ -111,6 +111,7 @@ conf.setExecutorEnv('PATH',
 
 
 sc = pyspark.SparkContext(conf=conf)
+application_id = sc._jsc.sc().applicationId()
 
 websocket_port = random.randint(30000, 60000)
 print 'websocket_port %d' % websocket_port
@@ -169,7 +170,7 @@ class ParameterServer(threading.Thread):
   def __init__(self, model, warmup_data=None, test_data=None):
     threading.Thread.__init__(self)
     self.model = model
-    self.yarn_ip=yarn_ip
+    self.yarn_ip = yarn_ip
     test_labels, test_features = model.process_data(test_data)
     self.test_features = test_features
     self.test_labels = test_labels
@@ -189,12 +190,12 @@ class ParameterServer(threading.Thread):
 
 def train_partition(partition):
   return parameterwebsocketclient.TensorSparkWorker(model_keyword, batch_sz, websocket_port,
-                                                    yarn_ip).train_partition(partition)
+                                                    yarn_ip,application_id).train_partition(partition)
 
 
 def test_partition(partition):
   return parameterwebsocketclient.TensorSparkWorker(model_keyword, batch_sz, websocket_port,
-                                                    yarn_ip).test_partition(partition)
+                                                    yarn_ip,application_id).test_partition(partition)
 
 
 # you can find the mnist csv files here http://pjreddie.com/projects/mnist-in-csv/                                                                                         
@@ -233,7 +234,6 @@ def main(warmup_iterations, num_epochs, num_partitions):
       training_rdd = sc.parallelize(
         sc.textFile(training_rdd_filename, minPartitions=num_partitions).take(
           training_iterations)).cache()
-
     print 'num_partitions = %s' % training_rdd.getNumPartitions()
     time.sleep(5)
 
@@ -261,7 +261,7 @@ def main(warmup_iterations, num_epochs, num_partitions):
     print 'Training continues to the Executor(s)'
     # training_rdd = training_rdd.subtract(sc.parallelize(warmup_data))
     train_epochs(num_epochs, training_rdd, num_partitions)
-    #               save_model()
+    # save_model()
     #                test_results = test_all()
     #               sc.show_profiles()
     #                t = time.time()
