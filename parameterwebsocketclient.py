@@ -156,6 +156,7 @@ class TensorSparkWorker(Borg):
   def request_parameters_coroutine(self):
     # more like receive parameters now
     parameters = yield self.websock.read_message()
+    # print 'yuhuali-parameters:%s' % str(parameters)
     parameters = self.model.deserialize(parameters)
     self.model.assign_parameters(parameters)
 

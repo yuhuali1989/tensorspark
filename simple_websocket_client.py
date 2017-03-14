@@ -9,7 +9,7 @@ import numpy
 @gen.coroutine
 def test_ws_1():
   client = yield tornado.websocket.websocket_connect("ws://localhost:8888/")
-  for i in range(10):
+  for i in range(1000):
     client.write_message('1')
     msg = yield client.read_message()
     print msg

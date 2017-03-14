@@ -34,8 +34,6 @@ directory = "hdfs:///data/ml/tensorspark/"
 local_directory = "/hadoopfs/fs1/python/tests/tensorspark/"  # path in datanodes
 import socket
 
-
-
 model_keyword = 'mnist'
 if model_keyword == 'mnist':
   # training_rdd_filename = '%smnist_train.csv' % directory
@@ -110,12 +108,14 @@ conf.setExecutorEnv('PATH',
 sc = pyspark.SparkContext(conf=conf)
 # get application id
 application_id = sc._jsc.sc().applicationId()
+print 'application_id : %s' % application_id
 # detect yarn ip
 try:
   yarn_ip = \
     str(sc._jsc.sc().getConf().get('spark.yarn.historyServer.address')).strip().split(':')[0]
 except Exception as e:
   print 'Could not get yarn host from spark java context except:%s' % str(e)
+  yarn_ip = None
 # yarn_ip = '172.31.29.43'
 
 print 'yarn-rm-ip :%s' % yarn_ip
@@ -195,6 +195,7 @@ class ParameterServer(threading.Thread):
 
 
 def train_partition(partition):
+  print 'train_partition info'
   return parameterwebsocketclient.TensorSparkWorker(model_keyword, batch_sz, websocket_port,
                                                     yarn_ip, application_id).train_partition(
     partition)
@@ -219,7 +220,7 @@ def train_epochs(num_epochs, training_rdd, num_partitions):
 
 
 def test_all():
-  testing_rdd = sc.textFile(test_filename).cache()
+  testing_rdd = sc.textFile(test_filename,use_unicode=False).cache()
   # testing_rdd = sc.textFile('%shiggs_test_all.csv' % directory)
   # testing_rdd = sc.textFile('%smolecular_test_all.csv' % directory)
   mapped_testing = testing_rdd.mapPartitions(test_partition)
@@ -236,11 +237,11 @@ def main(warmup_iterations, num_epochs, num_partitions):
   try:
     # mod (allowing limited training in each epoch) [setting values on top]
     if isTrainingLimited == False:
-      training_rdd = sc.textFile(training_rdd_filename, minPartitions=num_partitions).cache()
+      training_rdd = sc.textFile(training_rdd_filename, minPartitions=num_partitions,use_unicode=False).cache()
       # print 'yuhuali load:'+ str(training_rdd.take(1))
     else:
       training_rdd = sc.parallelize(
-        sc.textFile(training_rdd_filename, minPartitions=num_partitions).take(
+        sc.textFile(training_rdd_filename, minPartitions=num_partitions,use_unicode=False).take(
           training_iterations)).cache()
     print 'num_partitions = %s' % training_rdd.getNumPartitions()
     time.sleep(5)
@@ -249,7 +250,7 @@ def main(warmup_iterations, num_epochs, num_partitions):
     print 'warmup data:' + str(warmup_data)
 
     # mod (reading the testset from the HDFS instead):
-    test_data_lines = sc.textFile(test_path).collect()
+    test_data_lines = sc.textFile(test_path,use_unicode=False).collect()
     # with open(local_test_path) as test_file:
     #        test_data_lines = test_file.readlines()
 

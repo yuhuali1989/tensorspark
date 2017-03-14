@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 function scptoemr(){
-    scp -i ~/key/prod-data.pem -r ././../tensorspark hadoop@ec2-52-80-23-116.cn-north-1.compute.amazonaws.com.cn:~/yuhuali/
+    scp -i ~/key/prod-data.pem -r ././../tensorspark hadoop@ec2-54-223-189-86.cn-north-1.compute.amazonaws.com.cn:~/
+}
+function scppytoemr(){
+    scp -i ~/key/prod-data.pem -r *.py hadoop@ec2-54-223-189-86.cn-north-1.compute.amazonaws.com.cn:~/tensorspark
 }
 function submit(){
     zip pyfiles.zip ./parameterwebsocketclient.py ./parameterservermodel.py ./mnistcnn.py ./mnistdnn.py ./moleculardnn.py ./higgsdnn.py

@@ -1,7 +1,7 @@
 *.pyc
 data/*
 .DS_Store
-
+.vscode
 # Python packaging files
 *egg-info*
 
